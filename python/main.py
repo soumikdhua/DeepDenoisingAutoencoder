@@ -7,29 +7,29 @@ from model import REG
 from preprocessing import Synth, GenMatrix
 from os.path import join
 from utils import search_wav
-from sklearn.cross_validation import train_test_split
+from sklearn.model_selection import train_test_split
 
 np.random.seed(1234567)
 
-FLAGS = tf.flags.FLAGS
-tf.flags.DEFINE_string('clean_dir', '/mnt/md1/user_jonlu/Github/DeepDenoisingAutoencoder/data/raw/clean',
+FLAGS = tf.compat.v1.flags.FLAGS
+tf.compat.v1.flags.DEFINE_string('clean_dir', '/content/DeepDenoisingAutoencoder-master/data/raw/clean/cmu_us_awb_arctic/wav',
                        'set clean data folder')
-tf.flags.DEFINE_string('noise_dir', '/mnt/md1/user_jonlu/Github/DeepDenoisingAutoencoder/data/raw/noise',
+tf.compat.v1.flags.DEFINE_string('noise_dir', '/content/DeepDenoisingAutoencoder-master/data/raw/noise/ESC-50-master/audio',
                        'set noise data folder')
-tf.flags.DEFINE_string('noisy_dir', '../data/noisy',
+tf.compat.v1.flags.DEFINE_string('noisy_dir', '../data/noisy',
                        'set noisy(clean mixed with noise) data folder')
-tf.flags.DEFINE_string('enhanced_dir', '../data/enhanced',
+tf.compat.v1.flags.DEFINE_string('enhanced_dir', '../data/enhanced',
                        'set enhanced data folder')
-tf.flags.DEFINE_string('training_files_dir', '../data/training_files',
+tf.compat.v1.flags.DEFINE_string('training_files_dir', '../data/training_files',
                        'set training files folder')
-tf.flags.DEFINE_string('tb_dir', '../model/tb_logs', 'save tensorboard logs')
-tf.flags.DEFINE_string('saver_dir', '../model/saver', 'set folder for saver')
-tf.flags.DEFINE_bool('TRAIN', True, 'train this model or not')
-tf.flags.DEFINE_bool('TEST', True, 'test this model or not')
-tf.flags.DEFINE_integer('n_cores', 20, 'set cpu cores')
-tf.flags.DEFINE_integer('epochs', 100, 'epochs for training iterations')
-tf.flags.DEFINE_integer('batch_size', 32, 'number of batch size')
-tf.flags.DEFINE_float('learning_rate', 1e-3, 'learning rate')
+tf.compat.v1.flags.DEFINE_string('tb_dir', '../model/tb_logs', 'save tensorboard logs')
+tf.compat.v1.flags.DEFINE_string('saver_dir', '../model/saver', 'set folder for saver')
+tf.compat.v1.flags.DEFINE_bool('TRAIN', True, 'train this model or not')
+tf.compat.v1.flags.DEFINE_bool('TEST', True, 'test this model or not')
+tf.compat.v1.flags.DEFINE_integer('n_cores', 20, 'set cpu cores')
+tf.compat.v1.flags.DEFINE_integer('epochs', 100, 'epochs for training iterations')
+tf.compat.v1.flags.DEFINE_integer('batch_size', 32, 'number of batch size')
+tf.compat.v1.flags.DEFINE_float('learning_rate', 1e-3, 'learning rate')
 
 
 def main():
@@ -51,10 +51,12 @@ def main():
     # ===========================================================
     # ===========       Synthesize Noisy Data        ============
     # ===========================================================
-    clean_file_list = search_wav(clean_dir)                                 
+    clean_file_list = search_wav(clean_dir)
+    print("Total Clean files are - {}".format(len(clean_file_list)))                                 
     clean_train_list, clean_test_list = train_test_split(
         clean_file_list, test_size=0.2)
     noise_file_list = search_wav(noise_dir)[0:20]
+    print("Total Noise files are - {}".format(len(noise_file_list)))  
     noise_train_list, noise_test_list = train_test_split(
         noise_file_list, test_size=0.2)
     noise_test_list = noise_train_list # test on the same noise
